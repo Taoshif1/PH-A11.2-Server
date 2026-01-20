@@ -4,11 +4,13 @@ require('dotenv').config();
 
 
 const app = express();
-const port = process.env.PORT;
+const port = process.env.PORT || 5000;
 const dbUri = process.env.DB_URI;
 const accessToken = process.env.ACCESS_TOKEN;
 
+// --------------------
 // Global Middleware
+// --------------------
 app.use(cors());
 app.use(express.json());
 
@@ -17,15 +19,17 @@ console.log(`MongoDB URI: ${dbUri}`);
 console.log(`Access Token Loaded: ${accessToken ? "YES ✅" : "NO ❌"}`);
 
 
-// --------------------
-// Health Check / Root
-// --------------------
+
+// ------------------------------
+// Health Check / Root endpoint
+// ------------------------------
 app.get('/', (req, res)=>{
     res.status(200).json({
         message: "🩸 LifeStream Server is running successfully!",
         status: 200
     });
 })
+
 
 // --------------------
 // Server Bootstrap
