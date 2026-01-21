@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+const connectDB = require('./config/db');
+
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -15,7 +17,7 @@ app.use(cors());
 app.use(express.json());
 
 console.log(`Server is running on port ${port}`);
-console.log(`MongoDB URI: ${dbUri}`);
+console.log(`MongoDB URI Loaded: ${process.env.DB_URI ? "YES ✅" : "NO ❌"}`);
 console.log(`Access Token Loaded: ${accessToken ? "YES ✅" : "NO ❌"}`);
 
 
@@ -36,17 +38,18 @@ app.get('/', (req, res)=>{
 // --------------------
 async function startServer() {
     try {
-        // Later: connect DB here
+        // connect DB here
+        await connectDB();
+        app.listen(port, () =>{
+            console.log(`🚀 MongoDB Connected & Server is officially live at http://localhost${port}`);
+        });
         // Later: attach collections
         // Later: init models
         // Later: init controllers
         // Later: register routes
 
-        app.listen(port, () => {
-            console.log(`🚀 Server is officially live at http://localhost:${port}`);
-        });
-    } catch (error) {
-        console.error('❌ Failed to start server:', error);
+    } catch (e) {
+        console.error('❌ Failed to start server:', e);
         process.exit(1);
     }
 }
