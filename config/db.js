@@ -1,13 +1,35 @@
-const mongoose = require('mongoose');
+const { MongoClient, ServerApiVersion } = require("mongodb");
 
-const connectDB = async () => {
+let client;
+let db;
+
+async function connectDB() {
+  if (db) return db;
+
+  // 1. Initialize client with Stable API options
+  client = new MongoClient(process.env.DB_URI, {
+    serverApi: {
+      version: ServerApiVersion.v1,
+      strict: true,
+      deprecationErrors: true,
+    }
+  });
+
   try {
-    await mongoose.connect(process.env.DB_URI);
-    console.log('✅ MongoDB connected successfully');
+    // 2. Establish connection
+    await client.connect();
+
+    // 3. Optional: Verify connection with a ping
+    await client.db("admin").command({ ping: 1 });
+    
+    db = client.db(); // default DB from URI
+    console.log("✅ MongoDB connected (Native Driver with Stable API)");
+    
+    return db;
   } catch (error) {
-    console.error('❌ MongoDB connection failed:', error.message);
-    process.exit(1);
+    console.error("❌ MongoDB connection failed:", error);
+    throw error;
   }
-};
+}
 
 module.exports = connectDB;
