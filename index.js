@@ -40,6 +40,8 @@ async function startServer() {
     try {
         // connect DB here
         await connectDB();
+        
+        // Start Server
         app.listen(port, () =>{
             console.log(`🚀 MongoDB Connected & Server is officially live at http://localhost${port}`);
         });
