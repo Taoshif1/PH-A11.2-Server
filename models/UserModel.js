@@ -7,15 +7,17 @@ class UserModel {
 
   async create(user) {
     const doc = {
+      uid: user.uid, // from Firebase
       name: user.name,
       email: user.email,
       avatar: user.avatar || null,
-      bloodGroup: user.bloodGroup,
-      district: user.district,
-      upazila: user.upazila,
 
-      role: "donor",
-      status: "active",
+      bloodGroup: user.bloodGroup || null,
+      district: user.district || null,
+      upazila: user.upazila || null,
+
+      role: "donor", // default
+      status: "active", // default
 
       createdAt: new Date(),
       updatedAt: new Date(),

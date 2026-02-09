@@ -3,6 +3,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const connectDB = require('./config/db');
+const userRoutes = require('./routes/userRoutes')
 
 
 const app = express();
@@ -13,8 +14,15 @@ const accessToken = process.env.ACCESS_TOKEN;
 // --------------------
 // Global Middleware
 // --------------------
-app.use(cors());
+app.use(cors({
+  origin: [
+    "http://localhost:5173", // For local testing
+    "https://bloodapp2client-hp6ctl7b5-taoshifs-projects.vercel.app"
+  ],
+  credentials: true
+}));
 app.use(express.json());
+app.use("/api/users", userRoutes)
 
 console.log(`Server is running on port ${port}`);
 console.log(`MongoDB URI Loaded: ${process.env.DB_URI ? "YES ✅" : "NO ❌"}`);
@@ -43,7 +51,7 @@ async function startServer() {
         
         // Start Server
         app.listen(port, () =>{
-            console.log(`🚀 MongoDB Connected & Server is officially live at http://localhost${port}`);
+            console.log(`🚀 MongoDB Connected & Server is officially live at http://localhost:${port}`);
         });
         // Later: attach collections
         // Later: init models
