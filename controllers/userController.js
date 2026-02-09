@@ -47,7 +47,6 @@ exports.createUser = async (req, res) => {
   }
 };
 
-// MAKE SURE THIS IS EXPORTED CORRECTLY
 exports.getProfile = async (req, res) => {
   try {
     const email = req.user.email;
