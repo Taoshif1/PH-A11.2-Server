@@ -16,8 +16,9 @@ const accessToken = process.env.ACCESS_TOKEN;
 // --------------------
 app.use(cors({
   origin: [
-    "http://localhost:5173", // For local testing
-    "https://bloodapp2client-hp6ctl7b5-taoshifs-projects.vercel.app"
+"http://localhost:5173", 
+    "https://bloodapp2client.vercel.app", //  Vercel frontend
+    "https://your-netlify-app-name.netlify.app" // Netlify URL
   ],
   credentials: true
 }));
