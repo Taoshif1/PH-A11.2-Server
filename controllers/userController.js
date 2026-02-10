@@ -52,3 +52,24 @@ exports.getProfile = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+exports.updateUserProfile = async (req, res) => {
+  try {
+    const db = await connectDB();
+    const userModel = new UserModel(db.collection("bloodapp2users"));
+
+    const email = req.user.email; // From verifyToken middleware
+    const updateData = req.body;
+
+    // Find user first to get the ID
+    const user = await userModel.findByEmail(email);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const result = await userModel.updateProfile(user._id, updateData);
+    
+    res.status(200).json({ message: "Profile updated successfully", result });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Server error" });
+  }
+};
