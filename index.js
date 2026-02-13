@@ -6,8 +6,10 @@ const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const donationRoutes = require("./routes/donationRoutes")
 const adminRoutes = require("./routes/adminRoutes");
+const volunteerRoutes = require("./routes/volunteerRoutes");
 const verifyAdmin = require("./middleware/verifyAdmin");
 const verifyFirebaseToken = require("./middleware/verifyFirebaseToken");
+const verifyVolunteer = require("./middleware/verifyVolunteer");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -30,7 +32,7 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/donation-requests", donationRoutes);
 app.use("/api/admin", verifyFirebaseToken, verifyAdmin, adminRoutes);
-
+app.use("/api/volunteer", verifyFirebaseToken, verifyVolunteer, volunteerRoutes);
 
 console.log(`Server is running on port ${port}`);
 console.log(`MongoDB URI Loaded: ${process.env.DB_URI ? "YES ✅" : "NO ❌"}`);
@@ -60,10 +62,7 @@ async function startServer() {
         `🚀 MongoDB Connected & Server is officially live at http://localhost:${port}`,
       );
     });
-    // Later: attach collections
-    // Later: init models
-    // Later: init controllers
-    // Later: register routes
+
   } catch (e) {
     console.error("❌ Failed to start server:", e);
     process.exit(1);

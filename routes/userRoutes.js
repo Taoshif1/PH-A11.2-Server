@@ -13,4 +13,7 @@ router.get("/me", verifyToken, userController.getProfile);
 // Update Profile
 router.patch("/update-profile", verifyToken, userController.updateUserProfile);
 
+// Register as Volunteer
+router.post("/register-volunteer", userController.registerVolunteer);
+
 module.exports = router;
