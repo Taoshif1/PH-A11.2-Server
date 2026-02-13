@@ -26,7 +26,6 @@ router.get("/admin-stats", verifyToken, async (req, res) => {
       .collection("bloodRequests")
       .estimatedDocumentCount();
 
-    // If you want to be specific about donors:
     const donorsCount = await db
       .collection("bloodapp2users")
       .countDocuments({ role: "donor" });

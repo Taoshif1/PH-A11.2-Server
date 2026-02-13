@@ -141,7 +141,6 @@ exports.registerVolunteer = async (req, res) => {
     const db = await connectDB();
     const volunteerData = req.body;
 
-    // 1. Check if volunteer already exists by email
     const query = { email: volunteerData.email };
     const existingVolunteer = await db.collection("bloodapp2volunteer").findOne(query);
 
@@ -151,7 +150,6 @@ exports.registerVolunteer = async (req, res) => {
       });
     }
 
-    // 2. Insert into the specific volunteer collection
     const result = await db.collection("bloodapp2volunteer").insertOne(volunteerData);
 
     res.status(201).send(result);
