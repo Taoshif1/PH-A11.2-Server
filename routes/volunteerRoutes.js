@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const connectDB = require("../config/db"); 
+const connectDB = require("../config/db");
 const { ObjectId } = require("mongodb");
 
+// Get all requests (with filtering)
 router.get("/all-requests", async (req, res) => {
   try {
     const db = await connectDB();
@@ -21,18 +22,17 @@ router.get("/all-requests", async (req, res) => {
 
     res.send(result);
   } catch (error) {
-    console.error("Volunteer Route Error:", error);
-    res.status(500).send({ message: "Internal Server Error", error: error.message });
+    res.status(500).send({ message: "Fetch failed", error: error.message });
   }
 });
 
-module.exports = router;
-// Update status
+// Update ONLY the status
 router.patch("/update-status/:id", async (req, res) => {
   try {
     const db = await connectDB();
     const { status } = req.body;
 
+    // Strict check: Volunteers can ONLY update status
     const result = await db
       .collection("bloodRequests")
       .updateOne(
@@ -45,4 +45,4 @@ router.patch("/update-status/:id", async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = router; 

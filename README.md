@@ -6,18 +6,22 @@ server
 │  └─ firebase.js
 ├─ controllers
 │  └─ userController.js
-├─ index.js
 ├─ middleware
-│  └─ verifyFirebaseToken.js
+│  ├─ verifyAdmin.js
+│  ├─ verifyFirebaseToken.js
+│  └─ verifyVolunteer.js
 ├─ models
 │  ├─ index.js
 │  └─ UserModel.js
+├─ routes
+│  ├─ adminRoutes.js
+│  ├─ donationRoutes.js
+│  ├─ userRoutes.js
+│  └─ volunteerRoutes.js
+├─ index.js
 ├─ package-lock.json
 ├─ package.json
 ├─ README.md
-├─ routes
-│  ├─ donationRoutes.js
-│  └─ userRoutes.js
 └─ vercel.json
 
 ```

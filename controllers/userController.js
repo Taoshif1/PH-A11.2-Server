@@ -7,10 +7,10 @@ exports.getProfile = async (req, res) => {
     const db = await connectDB();
     const email = req.user.email;
 
-    // 1. Check if the user is in the main users/donors collection
+    // Check if the user is in the main users/donors collection
     let user = await db.collection("bloodapp2users").findOne({ email });
 
-    // 2. If not found, check the volunteer collection
+    // If not found, check the volunteer collection
     if (!user) {
       user = await db.collection("bloodapp2volunteer").findOne({ email });
     }
@@ -88,7 +88,7 @@ exports.updateUserProfile = async (req, res) => {
 
     if (!user) return res.status(404).json({ message: "User not found" });
 
-    delete updateData._id; // Ensure we don't try to update the immutable ID
+    delete updateData._id;
 
     const result = await db
       .collection(collectionName)

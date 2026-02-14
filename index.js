@@ -1,10 +1,11 @@
 const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
+const { ObjectId } = require('mongodb');
 
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
-const donationRoutes = require("./routes/donationRoutes")
+const donationRoutes = require("./routes/donationRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const volunteerRoutes = require("./routes/volunteerRoutes");
 const verifyAdmin = require("./middleware/verifyAdmin");
@@ -32,7 +33,12 @@ app.use(express.json());
 app.use("/api/users", userRoutes);
 app.use("/api/donation-requests", donationRoutes);
 app.use("/api/admin", verifyFirebaseToken, verifyAdmin, adminRoutes);
-app.use("/api/volunteer", verifyFirebaseToken, verifyVolunteer, volunteerRoutes);
+app.use(
+  "/api/volunteer",
+  verifyFirebaseToken,
+  verifyVolunteer,
+  volunteerRoutes,
+);
 
 console.log(`Server is running on port ${port}`);
 console.log(`MongoDB URI Loaded: ${process.env.DB_URI ? "YES ✅" : "NO ❌"}`);
@@ -48,8 +54,33 @@ app.get("/", (req, res) => {
   });
 });
 
+// Get single blood request by ID for VIEWING DETAILS (No auth required)
+app.get("/api/requests/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const db = await connectDB();
+    
+    // Check if ID is valid to prevent server crash
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).send({ message: "Invalid ID format" });
+    }
+
+    const query = { _id: new ObjectId(id) };
+    const result = await db.collection("bloodRequests").findOne(query);
+    
+    if (!result) {
+      return res.status(404).send({ message: "Request not found" });
+    }
+    
+    res.send(result);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+});
+
 // --------------------
-// Server 
+// Server
 // --------------------
 async function startServer() {
   try {
@@ -62,7 +93,6 @@ async function startServer() {
         `🚀 MongoDB Connected & Server is officially live at http://localhost:${port}`,
       );
     });
-
   } catch (e) {
     console.error("❌ Failed to start server:", e);
     process.exit(1);

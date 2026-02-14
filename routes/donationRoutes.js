@@ -33,7 +33,7 @@ router.get("/my-requests", verifyToken, async (req, res) => {
     const db = await connectDB();
     const donationCollection = db.collection("bloodRequests");
 
-    const email = req.user.email; // From verifyToken middleware
+    const email = req.user.email; 
     const query = { requesterEmail: email };
 
     const result = await donationCollection
@@ -82,7 +82,7 @@ router.post("/", verifyToken, async (req, res) => {
 
     const newRequest = {
       ...req.body,
-      status: "pending", // Ensure status is always pending initially
+      status: "pending", // Status is always pending initially
       createdAt: new Date(),
     };
 
