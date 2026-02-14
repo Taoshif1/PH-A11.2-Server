@@ -156,4 +156,24 @@ router.patch("/donate/:id", async (req, res) => {
   }
 });
 
+// GET all public donation requests for the ticker (Public)
+router.get("/public/all", async (req, res) => {
+  try {
+    const db = await connectDB();
+    const donationCollection = db.collection("bloodRequests");
+
+    // Fetch only pending requests to show in the ticker
+    const result = await donationCollection
+      .find({ status: "pending" })
+      .sort({ createdAt: -1 })
+      .limit(10) // Keep small for performance
+      .toArray();
+
+    res.send(result);
+  } catch (error) {
+    console.error("Ticker fetch error:", error);
+    res.status(500).json({ error: "Failed to fetch ticker data" });
+  }
+});
+
 module.exports = router;

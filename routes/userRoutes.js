@@ -24,11 +24,12 @@ router.get("/donors/search", async (req, res) => {
     const { bloodGroup, district, upazila } = req.query;
 
     let query = { status: "pending" };
+    // let query = { role: "donor", status: "active" }; // Find active donors
 
     if (bloodGroup && bloodGroup !== "") query.bloodGroup = bloodGroup;
     if (district && district !== "") query.recipientDistrict = district;
     if (upazila && upazila !== "") query.recipientUpazila = upazila;
-    
+
     const result = await db.collection("bloodRequests").find(query).toArray();
     res.send(result);
   } catch (error) {
