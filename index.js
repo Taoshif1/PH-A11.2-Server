@@ -11,11 +11,15 @@ const volunteerRoutes = require("./routes/volunteerRoutes");
 const verifyAdmin = require("./middleware/verifyAdmin");
 const verifyFirebaseToken = require("./middleware/verifyFirebaseToken");
 const verifyVolunteer = require("./middleware/verifyVolunteer");
+const paymentRoutes = require("./routes/paymentRoutes");
 
 const app = express();
 const port = process.env.PORT || 5000;
 const dbUri = process.env.DB_URI;
 const accessToken = process.env.ACCESS_TOKEN;
+
+// index.js
+console.log(`Stripe Key Loaded: ${process.env.STRIPE_SECRET_KEY ? "YES ✅" : "NO ❌"}`);
 
 // --------------------
 // Global Middleware
@@ -39,6 +43,9 @@ app.use(
   verifyVolunteer,
   volunteerRoutes,
 );
+app.use("/api/payments", paymentRoutes);
+
+
 
 console.log(`Server is running on port ${port}`);
 console.log(`MongoDB URI Loaded: ${process.env.DB_URI ? "YES ✅" : "NO ❌"}`);

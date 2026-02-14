@@ -32,7 +32,7 @@ router.patch("/update-status/:id", async (req, res) => {
     const db = await connectDB();
     const { status } = req.body;
 
-    // Strict check: Volunteers can ONLY update status
+    // Strict check Volunteers can ONLY update status
     const result = await db
       .collection("bloodRequests")
       .updateOne(
