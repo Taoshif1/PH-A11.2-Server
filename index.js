@@ -62,7 +62,7 @@ app.get("/", (req, res) => {
 });
 
 // Get single blood request by ID for VIEWING DETAILS (No auth required)
-app.get("/api/requests/:id", async (req, res) => {
+app.get("/api/requests/:id", async (req, res, next) => {
   try {
     const id = req.params.id;
     const db = await connectDB();
@@ -83,8 +83,19 @@ app.get("/api/requests/:id", async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).send({ message: "Internal server error" });
+    next(error);
   }
 });
+
+// --- THE ERROR HANDLER ---
+app.use((err, req, res, next) => {
+  console.error("🔥 Global Error:", err.stack);
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+  });
+});
+
 
 // --------------------
 // Server
@@ -105,5 +116,6 @@ async function startServer() {
     process.exit(1);
   }
 }
+
 
 startServer();

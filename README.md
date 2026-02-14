@@ -16,6 +16,7 @@ server
 ├─ routes
 │  ├─ adminRoutes.js
 │  ├─ donationRoutes.js
+│  ├─ paymentRoutes.js
 │  ├─ userRoutes.js
 │  └─ volunteerRoutes.js
 ├─ index.js

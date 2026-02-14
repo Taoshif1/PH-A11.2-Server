@@ -1,42 +1,57 @@
+// routes/adminRoutes.js
+
 const express = require("express");
 const router = express.Router();
 const verifyToken = require("../middleware/verifyFirebaseToken");
 const connectDB = require("../config/db");
 const { ObjectId } = require("mongodb");
 
-// GET all users
+// GET Users with Pagination & Search
 router.get("/users", verifyToken, async (req, res) => {
   try {
     const db = await connectDB();
-    const result = await db.collection("bloodapp2users").find().toArray();
-    res.send(result);
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const totalUsers = await db.collection("bloodapp2users").countDocuments();
+    const result = await db.collection("bloodapp2users")
+      .find()
+      .skip(skip)
+      .limit(limit)
+      .toArray();
+
+    res.send({ result, totalUsers, totalPages: Math.ceil(totalUsers / limit) });
   } catch (error) {
     res.status(500).send({ message: "Failed to fetch users" });
   }
 });
 
-// Dashboard Stats
+// Optimized Admin Stats
 router.get("/admin-stats", verifyToken, async (req, res) => {
   try {
     const db = await connectDB();
-    const usersCount = await db
-      .collection("bloodapp2users")
-      .estimatedDocumentCount();
-    const bloodRequestsCount = await db
-      .collection("bloodRequests")
-      .estimatedDocumentCount();
 
-    const donorsCount = await db
-      .collection("bloodapp2users")
-      .countDocuments({ role: "donor" });
+    // Parallel execution for speed
+    const [users, bloodRequests, donors, payments] = await Promise.all([
+      db.collection("bloodapp2users").estimatedDocumentCount(),
+      db.collection("bloodRequests").estimatedDocumentCount(),
+      db.collection("bloodapp2users").countDocuments({ role: "donor" }),
+      db.collection("funds").aggregate([
+        { $group: { _id: null, totalAmount: { $sum: "$amount" }, count: { $sum: 1 } } }
+      ]).toArray()
+    ]);
 
     res.send({
-      users: usersCount,
-      bloodRequests: bloodRequestsCount,
-      totalDonors: donorsCount,
+      users,
+      bloodRequests,
+      totalDonors: donors,
+      totalAmount: payments[0]?.totalAmount || 0,
+      totalDonations: payments[0]?.count || 0
     });
   } catch (error) {
-    res.status(500).send({ message: "Failed to fetch stats" });
+    console.log("Error-> ", error);
+    res.status(500).send({ message: "Stats failure" });
   }
 });
 

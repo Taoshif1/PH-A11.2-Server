@@ -1,3 +1,5 @@
+// routes/paymentRoutes.js
+
 require("dotenv").config();
 const express = require("express");
 const router = express.Router();
@@ -6,27 +8,43 @@ const connectDB = require("../config/db");
 const { ObjectId } = require("mongodb");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 
-
 // Get all funds (Private - Added verifyToken)
 router.get("/funds", verifyToken, async (req, res) => {
   try {
     const db = await connectDB();
+    const page = parseInt(req.query.page) || 1;
+    const limit = 10;
+    const skip = (page - 1) * limit;
+
+    const total = await db.collection("funds").countDocuments();
     const result = await db
       .collection("funds")
       .find()
       .sort({ date: -1 })
+      .skip(skip)
+      .limit(limit)
       .toArray();
-    res.status(200).send(result);
+
+    res.status(200).send({ result, total });
   } catch (error) {
-    res.status(500).send({ message: "Failed to fetch funds", error });
+    res.status(500).send({ message: "Failed to fetch funds", error: error.message });
   }
 });
 
 // Save a successful payment to the database
 router.post("/funds", verifyToken, async (req, res) => {
   try {
-    const payment = req.body; 
+    const { userName, userEmail, amount, transactionId, date } = req.body;
     const db = await connectDB();
+
+    const payment = {
+      userName,
+      userEmail,
+      amount: parseFloat(amount),
+      transactionId,
+      date: new Date(date),
+    };
+
     const result = await db.collection("funds").insertOne(payment);
     res.status(201).send(result);
   } catch (error) {
