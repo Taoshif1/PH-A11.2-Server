@@ -38,7 +38,7 @@ router.post("/funds", verifyToken, async (req, res) => {
     const db = await connectDB();
 
     const payment = {
-      userName,
+      userName: userName || userEmail.split('@')[0] || "Anonymous Donor",
       userEmail,
       amount: parseFloat(amount),
       transactionId,

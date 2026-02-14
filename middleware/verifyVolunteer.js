@@ -15,7 +15,7 @@ const verifyVolunteer = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error("Volunteer Middleware Error:", error);
+    // console.error("Volunteer Middleware Error:", error);
     res.status(500).send({ message: "Authorization Error" });
   }
 };

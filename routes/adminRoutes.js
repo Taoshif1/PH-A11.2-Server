@@ -15,7 +15,8 @@ router.get("/users", verifyToken, async (req, res) => {
     const skip = (page - 1) * limit;
 
     const totalUsers = await db.collection("bloodapp2users").countDocuments();
-    const result = await db.collection("bloodapp2users")
+    const result = await db
+      .collection("bloodapp2users")
       .find()
       .skip(skip)
       .limit(limit)
@@ -37,9 +38,18 @@ router.get("/admin-stats", verifyToken, async (req, res) => {
       db.collection("bloodapp2users").estimatedDocumentCount(),
       db.collection("bloodRequests").estimatedDocumentCount(),
       db.collection("bloodapp2users").countDocuments({ role: "donor" }),
-      db.collection("funds").aggregate([
-        { $group: { _id: null, totalAmount: { $sum: "$amount" }, count: { $sum: 1 } } }
-      ]).toArray()
+      db
+        .collection("funds")
+        .aggregate([
+          {
+            $group: {
+              _id: null,
+              totalAmount: { $sum: "$amount" },
+              count: { $sum: 1 },
+            },
+          },
+        ])
+        .toArray(),
     ]);
 
     res.send({
@@ -47,7 +57,7 @@ router.get("/admin-stats", verifyToken, async (req, res) => {
       bloodRequests,
       totalDonors: donors,
       totalAmount: payments[0]?.totalAmount || 0,
-      totalDonations: payments[0]?.count || 0
+      totalDonations: payments[0]?.count || 0,
     });
   } catch (error) {
     console.log("Error-> ", error);
@@ -59,21 +69,32 @@ router.get("/admin-stats", verifyToken, async (req, res) => {
 router.get("/all-requests", verifyToken, async (req, res) => {
   try {
     const db = await connectDB();
+    const { status, sort, page = 1, limit = 10 } = req.query;
     const filterStatus = req.query.status;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
     const sortOrder = req.query.sort === "asc" ? 1 : -1; // 1 for old-to-new, -1 for new-to-old
 
     let query = {};
     if (filterStatus && filterStatus !== "all") {
       query.status = filterStatus;
     }
+    if (status && status !== "all") query.status = status;
+
+    const totalRequests = await db.collection("bloodRequests").countDocuments(query);
 
     const result = await db
       .collection("bloodRequests")
       .find(query)
       .sort({ createdAt: sortOrder })
+      .skip(skip)   
+      .limit(parseInt(limit)) 
       .toArray();
 
-    res.send(result);
+    res.send({
+      result,
+      totalRequests,
+      totalPages: Math.ceil(totalRequests / limit),
+    });
   } catch (error) {
     res.status(500).send({ message: "Failed to fetch requests" });
   }

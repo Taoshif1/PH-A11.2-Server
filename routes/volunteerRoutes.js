@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const connectDB = require("../config/db");
 const { ObjectId } = require("mongodb");
+const verifyVolunteer = require("../middleware/verifyVolunteer");
+const verifyFirebaseToken = require("../middleware/verifyFirebaseToken");
 
 // Get all requests (with filtering)
 router.get("/all-requests", async (req, res) => {
@@ -27,7 +29,7 @@ router.get("/all-requests", async (req, res) => {
 });
 
 // Update ONLY the status
-router.patch("/update-status/:id", async (req, res) => {
+router.patch("/update-status/:id", verifyFirebaseToken, verifyVolunteer, async (req, res) => {
   try {
     const db = await connectDB();
     const { status } = req.body;
