@@ -127,4 +127,33 @@ router.patch("/status/:id", verifyToken, async (req, res) => {
   }
 });
 
+// Update donation request status/info (When someone clicks "Donate Now")
+router.patch("/donate/:id", async (req, res) => {
+  try {
+    const id = req.params.id;
+    const donorData = req.body; // Contains donorName, donorEmail, donorNote, status
+    const db = await connectDB();
+    
+    const filter = { _id: new ObjectId(id) };
+    const updatedDoc = {
+      $set: {
+        donorName: donorData.donorName,
+        donorEmail: donorData.donorEmail,
+        donorNote: donorData.donorNote,
+        status: "inprogress", // Mark as in-progress once someone commits
+      },
+    };
+
+    const result = await db.collection("bloodRequests").updateOne(filter, updatedDoc);
+    
+    if (result.modifiedCount > 0) {
+      res.send(result);
+    } else {
+      res.status(404).send({ message: "Request not found or no changes made" });
+    }
+  } catch (error) {
+    res.status(500).send({ message: "Internal server error" });
+  }
+});
+
 module.exports = router;
