@@ -97,7 +97,11 @@ exports.updateUserProfile = async (req, res) => {
         { $set: { ...updateData, updatedAt: new Date() } },
       );
 
-    res.status(200).json({ message: "Profile updated successfully", result });
+    res.status(200).json({
+      success: true, // This allows your frontend 'if' to work
+      message: "Profile updated successfully",
+      data: { ...user, ...updateData }, // This allows the UI to update
+    });
   } catch (err) {
     console.error("Update Error:", err);
     res.status(500).json({ error: "Server error" });
@@ -142,15 +146,19 @@ exports.registerVolunteer = async (req, res) => {
     const volunteerData = req.body;
 
     const query = { email: volunteerData.email };
-    const existingVolunteer = await db.collection("bloodapp2volunteer").findOne(query);
+    const existingVolunteer = await db
+      .collection("bloodapp2volunteer")
+      .findOne(query);
 
     if (existingVolunteer) {
-      return res.status(400).send({ 
-        message: "This email is already registered as a volunteer!" 
+      return res.status(400).send({
+        message: "This email is already registered as a volunteer!",
       });
     }
 
-    const result = await db.collection("bloodapp2volunteer").insertOne(volunteerData);
+    const result = await db
+      .collection("bloodapp2volunteer")
+      .insertOne(volunteerData);
 
     res.status(201).send(result);
   } catch (error) {
