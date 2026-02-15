@@ -1,9 +1,16 @@
 # 🩸 LifeStream API | Backend Server
 
-The backend engine for LifeStream, a blood donation and management platform. Built with Node.js, Express and MongoDB, featuring Firebase Admin SDK for secure authentication and Stripe for donation funding.
+The backend engine for LifeStream, a blood donation & management platform. Built with Node.js, React, Express & MongoDB, featuring Role Based Access Control (RBAC), real-time blood request management, Firebase Admin SDK for secure authentication & Stripe for financial transactions.
 
 ## 🚀 Live Server
 **URL:** [https://bloodapp2.vercel.app/](https://bloodapp2.vercel.app/)
+
+## 🌟 Key Features
+- **Secure Authentication:** Integration with Firebase Admin SDK for robust JWT-based identity verification.
+- **RBAC (Role-Based Access Control):** Dedicated middleware for **Admin**, **Volunteer** & **Donor** roles to ensure data security.
+- **Automated Payments:** Secure donation processing via **Stripe** with automated transaction logging.
+- **Advanced Filtering:** Complex MongoDB queries for searching donors by Blood Group, District & Upazila.
+- **Dashboard Analytics:** Aggregated statistics using MongoDB pipelines for real-time platform overview.
 
 ## 🛠️ Tech Stack
 - **Runtime:** Node.js (Express.js)
@@ -44,8 +51,18 @@ server
 
 ```
 
+## 🗄️ Database Collections
+
+- **bloodapp2users**: Stores donor/admin profile data & account status.
+
+- **bloodapp2volunteer**: Stores dedicated volunteer applications & records.
+
+- **bloodRequests**: Manages all active & historical blood donation requests.
+
+- **funds**: Secure logs of all successful Stripe donations.
+
 ## 🔐 Environment Variables
-To run this project locally, create a **.env** file in the root directory and add:
+To run this project locally, create a **.env** file in the root directory & add:
 
 ```js
 PORT=5000
@@ -61,45 +78,45 @@ STRIPE_SECRET_KEY=your_stripe_key
 
 ### 👤 User Routes (/api/users)
 
-- POST /register - Initialize/Create user profile (Auth required)
+- **POST /register** - Initialize/Create user profile (Auth required)
 
-- GET /me - Get logged-in user details
+- **GET /me** - Get logged-in user details
 
-- PATCH /update-profile - Update profile info
+- **PATCH /update-profile** - Update profile info
 
-- GET /donors/search - Public search for blood donors
+- **GET /donors/search** - Public search for blood donors
 
 ### 🩸 Donation Requests (/api/donation-requests)
 
-- POST / - Create a new blood request
+- **POST / - Create** a new blood request
 
-- GET /my-requests - Get requests created by the user
+- **GET /my-requests** - Get requests created by the user
 
-- PATCH /status/:id - Update status (Done/Canceled)
+- **PATCH /status/:id** - Update status (Done/Canceled)
 
-- PATCH /donate/:id - Volunteer to donate (Public)
+- **PATCH /donate/:id** - Volunteer to donate (Public)
 
 ### 👮 Admin Routes (/api/admin)
 
-- GET /users - Manage all users (Pagination/Search)
+- **GET /users** - Manage all users (Pagination/Search)
 
-- GET /admin-stats - Dashboard statistics (Total funds, users, requests)
+- **GET /admin-stats** - Dashboard statistics (Total funds, users, requests)
 
-- PATCH /users/:id - Change user roles or block/unblock users
+- **PATCH /users/:id** - Change user roles or block/unblock users
 
 ### 🤝 Volunteer Routes (/api/volunteer)
 
-- GET /all-requests - View all blood requests
+- **GET /all-requests** - View all blood requests
 
-- PATCH /update-status/:id - Update request status only
+- **PATCH /update-status/:id** - Update request status only
 
 ### 💳 Payment Routes (/api/payments)
 
-- POST /create-payment-intent - Initialize Stripe payment
+- **POST /create-payment-intent** - Initialize Stripe payment
 
-- POST /funds - Save successful donation record to DB
+- **POST /funds** - Save successful donation record to DB
 
-- GET /funds - View funding history (Private)
+- **GET /funds** - View funding history (Private)
 
 ## 🛠️ Installation & Setup
 
@@ -127,15 +144,23 @@ npm run dev
 npm start
 ```
 
-## 📄 License
-This project is **NOT licensed under the ISC License**. It is developed solely for educational purposes to master the MERN stack.
+---
+## 🌟 Support & Connect
 
-- **Purpose**: Personal learning and portfolio development.
+If you found this project helpful or learned something new from the implementation of **RBAC**, **Firebase Admin** or **Stripe**, please consider giving this repository a **Star** ⭐! It helps the project reach more developers.
 
-- **Usage**: This code is not intended for commercial use or distribution.
+### 🛠️ Need Customization or Upgrades?
+Are you looking to scale this platform, integrate new features or need help with a similar MERN stack deployment? I'm open to collaborations and technical consultations.
 
-- **Learning Goals**: Implementation of Role Based Access Control (RBAC) Firebase Admin SDK, Stripe payment gateways and advanced MongoDB aggregation.
-
+**Let's build something impactful together!**
 
 ---
 
+## 📄 License
+This project is **NOT licensed under the ISC License**. It is developed solely for educational purposes to master the MERN stack.
+
+- **Purpose**: Personal learning & portfolio development.
+
+- **Usage**: This code is not intended for commercial use or distribution.
+
+- **Learning Goals**: Implementation of Role Based Access Control (RBAC) Firebase Admin SDK, Stripe payment gateways & advanced MongoDB aggregation.
