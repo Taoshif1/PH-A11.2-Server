@@ -98,9 +98,9 @@ exports.updateUserProfile = async (req, res) => {
       );
 
     res.status(200).json({
-      success: true, // This allows your frontend 'if' to work
+      success: true, 
       message: "Profile updated successfully",
-      data: { ...user, ...updateData }, // This allows the UI to update
+      data: { ...user, ...updateData }, 
     });
   } catch (err) {
     console.error("Update Error:", err);

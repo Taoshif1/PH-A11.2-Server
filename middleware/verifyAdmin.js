@@ -1,4 +1,3 @@
-// server/middleware/verifyAdmin.js
 const connectDB = require("../config/db");
 
 const verifyAdmin = async (req, res, next) => {
